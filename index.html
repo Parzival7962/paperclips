@@ -29,371 +29,383 @@
     
     
         
-            //total clips
-            var totClips = 0;
+           //total clips
+var totClips = 0;
+
+//available funds
+var availFunds = 0;
+
+//revenue per second
+var revSec = 0;
+
+//clips sold per second
+var clipSec = 0;
+
+//how many clips haven't been sold
+var invent = 0;
+
+//price of one clip
+var price = 25;
+
+//public demand
+var pDemand = 30;
+
+//marketing level
+var marketLevel = 1;
+
+//marketing price
+var marketPrice = 100;
+
+//clips produced per second
+var pClipSec = 0;
+
+//automatic wirebuyer
+var wireBuy = false;
+var wBOn = true;
+var wBPrice = 1000;
+var wPlus = 1000;
+
+//how much wire you have
+var wire = 1000;
+
+//price of 1000 wire
+var wirePrice = 20;
+
+//how many autoclippers the player has
+var autoClip = 0;
+
+//price of one autoclipper
+var autoClipPrice = 5;
+
+//center of make clip button
+var aRectX = 60;
+var aRectY = 75;
+
+//center of -$0.01 button
+var bRectX = 145;
+var bRectY = 165;
+
+//center of +$0.01 button
+var cRectX = 195;
+var cRectY = 165;
+
+//center of wire price button
+var dRectX = 120;
+var dRectY = 265;
+
+//center of autoclipper price button
+var eRectX = 158;
+var eRectY = 335;
+
+//center of wirebuyer button
+var fRectX = 100;
+var fRectY = 290;
+
+//center of marketing buying button
+var gRectX = 125;
+var gRectY = 225;
+
+//center of wire buyer buy button
+var hRectX = 135;
+var hRectY = 290;
+
+//whether autoclippers are available or not
+var autoAvail = false;
+
+//randomizes wireprice
+var wirePR = 0;
+
+
+
+
+
+
+//dev stuff(mess with if you dare)
+//whether or not you are considered a dev
+var dev = false;
+var speed = 1000;
+var priceChange = false;
+var nDev = true;
+
+if(dev){
+    availFunds = 100000000;
+    wireBuy = true;
+    autoAvail = true;
+    autoClip = 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;
+    marketLevel += 1000000000000000000000000000000000000000000000000000000000000000000000000000;
+    wPlus = autoClip;
+    marketPrice = 1;
+    nDev = false;
+    wirePrice = 1;
+    autoClipPrice = 1;
+    
+    
+}
+
+//converting time to seconds
+var m = minute() + (hour()*60);
+var s = second() + (m*60);
+
+
+
+
+var changeTime = 0; // future when ci changes.
+draw = function() {
+    
+    //makes autoclippers actually produce & helps with randomizing wire price
+    var now = millis();
+    if (now >= changeTime) {
+        changeTime = now + 1000; 
+        wirePR++;
+        
+        if(wire>=pClipSec){
+            totClips += pClipSec;
+            invent += pClipSec;
+            wire -= pClipSec;
             
-            //available funds
-            var availFunds = 0;
+        }
+        else if(autoAvail){
+            totClips += wire;
+            invent += wire;
+            wire = 0;
             
-            //revenue per second
-            var revSec = 0;
+        }
+        
+        //automatic selling of paperclips based on public demand
+    
+        clipSec = round(pDemand/10);
+        revSec = clipSec*price/100;
+        
+        if(invent >= clipSec){
+            invent -= clipSec;
+            availFunds += revSec;
+        
+        }
+        else if(invent > 0){
+            availFunds += invent*(price/100);
+            invent -= invent;
             
-            //clips sold per second
-            var clipSec = 0;
+        }
+        
+        
+    }
+    
+    
+    //just don't touch
+    background(255, 255, 255);
+    
+
+    //Total paperclips made
+    fill(0, 0, 0);
+    textSize(22);
+    text("TOTAL CLIPS:", 20, 25);
+    text(totClips, 25, 50);
+    
+    //button to make paperclips
+    textSize(14);
+    fill(255, 255, 255);
+    rectMode(CENTER);
+    rect(aRectX, aRectY, 65, 25);
+    fill(0, 0, 0);
+    text("make clip", aRectX-29, aRectY+5);
+    
+    
+    //available funds:
+    text("Available Funds: $" + availFunds, 20, 125);
+    
+    //average rev/sec
+    text("Average Revenue/Second: $" + revSec, 190, 80);
+    
+    //average clips sold/sec
+    text("Average Clips Sold/Sec: " + clipSec, 200, 100);
+    
+    //unsold inventory
+    text("Unsold Inventory: " + invent, 20, 150);
+    
+    //price/clip(two buttons(+0.01 & -0.01)
+    text("Clip Price: $" + price/100, 20, 170);
+    fill(255, 255, 255);
+    rect(bRectX, bRectY, 40, 20);
+    fill(0, 0, 0);
+    text("-$0.01", bRectX-19, bRectY+5);
+    fill(255, 255, 255);
+    rect(cRectX, cRectY, 45, 20);
+    fill(0, 0, 0);
+    text("+$0.01", cRectX-20, cRectY+5);
+    
+    //public demand
+    text("Public Demand: " + pDemand + "%", 20, 190);
+    pDemand = 30+((marketLevel-1)*(marketLevel*10));
+    
+    
+    //marketing
+    text("Marketing Level: " + marketLevel, 20, 210);
+    fill(255, 255, 255);
+    rect(gRectX, gRectY, 35, 20);
+    fill(0, 0, 0);
+    text("Marketing +1: $" + marketPrice, 20, 230);
+    
+    
+    //clips/sec
+    text("Clips/Sec: " + pClipSec, 200, 120);
+    
+    //when bought: wirebuyer(with on/off switch)
+     if(wireBuy){
+        text("Wirebuyer", 20, 295);
+        fill(255, 255, 255);
+        rect(fRectX, fRectY, 25, 20);
+        
+        fill(0, 0, 0);
+        if(wBOn){
+            text("On", 90, 295);
             
-            //how many clips haven't been sold
-            var invent = 0;
-            
-            //price of one clip
-            var price = 25;
-            
-            //public demand
-            var pDemand = 30;
-            
-            //marketing level
-            var marketLevel = 1;
-            
-            //marketing price
-            var marketPrice = 100;
-            
-            //clips produced per second
-            var pClipSec = 0;
-            
-            //automatic wirebuyer
-            var wireBuy = false;
-            var wBOn = true;
-            var wBPrice = 1000;
-            
-            //how much wire you have
-            var wire = 1000;
-            
-            //price of 1000 wire
-            var wirePrice = 20;
-            
-            //how many autoclippers the player has
-            var autoClip = 0;
-            
-            //price of one autoclipper
-            var autoClipPrice = 5;
-            
-            //center of make clip button
-            var aRectX = 60;
-            var aRectY = 75;
-            
-            //center of -$0.01 button
-            var bRectX = 145;
-            var bRectY = 165;
-            
-            //center of +$0.01 button
-            var cRectX = 195;
-            var cRectY = 165;
-            
-            //center of wire price button
-            var dRectX = 120;
-            var dRectY = 265;
-            
-            //center of autoclipper price button
-            var eRectX = 158;
-            var eRectY = 335;
-            
-            //center of wirebuyer button
-            var fRectX = 100;
-            var fRectY = 290;
-            
-            //center of marketing buying button
-            var gRectX = 125;
-            var gRectY = 225;
-            
-            //center of wire buyer buy button
-            var hRectX = 135;
-            var hRectY = 290;
-            
-            //whether autoclippers are available or not
-            var autoAvail = false;
-            
-            //randomizes wireprice
-            var wirePR = 0;
-            
-            
-            
-            
-            
-            
-            //dev stuff(mess with if you dare)
-            //whether or not you are considered a dev
-            var dev = false;
-            if(dev){
-                availFunds = 100000000;
-                wireBuy = true;
-                autoAvail = true;
-                autoClip = 100;
-                marketLevel = 10;
+            if(wire <= 0 && availFunds >= wirePrice){
+                wire += wPlus;
+                availFunds -= wirePrice;
                 
             }
             
-            //converting time to seconds
-            var m = minute() + (hour()*60);
-            var s = second() + (m*60);
+        }
+        else{
+            text("Off", 90, 295);
             
+        }
+        
+    }
+    else{
+        fill(255, 255, 255);
+        rect(hRectX, hRectY, 40, 20);
+        fill(0, 0, 0);
+        text("Buy wirebuyer: $" + wBPrice, 20, 295);
+    }
+    
+    //wire: how much and buy button
+    
+    text("Available Wire: " + wire, 20, 250);
+    fill(255, 255, 255);
+    rect(dRectX, dRectY, 30, 20);
+    
+    //price of wire
+    fill(0, 0, 0);
+    text("Price of Wire: $" + wirePrice, 20, 270);
+    
+    //after 10 clips: autoclippers and price
+    if(autoAvail){
+        text("Autoclippers: " + autoClip, 20, 320);
+        fill(255, 255, 255);
+        rect(eRectX, eRectY, 25, 20);
+        fill(0, 0, 0);
+        text("Price of Autoclipper: $" + autoClipPrice, 20, 340);
+        
+    }
+    
+    //enables autoclippers
+    if(totClips >= 10){
+    autoAvail = true;
+    
+    }
+    
+    //wire price randomizer
+    if(wirePR>=5 && nDev){
+        wirePrice = round(random(13, 25));
+        wirePR = 0;
+    
+    }
+    
+    //don't worry bout it
+    pClipSec = autoClip;
+    
+    //dev stuff
+    //updates time
+    m = minute() + (hour()*60);
+    s = second() + (m*60);
+    fill(0, 0, 0);
+    text(hour() + ", " + minute() + ", " + second(), 300, 300);
+    text(s, 300, 330);
+    
+    
+    
+    
+    
+};
+
+
+mouseClicked = function(){
+    
+    //make clip button
+    if(mouseX >= aRectX-33 && mouseX <= aRectX+33 && mouseY >= aRectY-13 && mouseY <= aRectY+13 && wire > 0){
+        totClips++;
+        invent++;
+        wire--;
+        
+    }
+    
+    //price - button
+    if(mouseX >= bRectX-33 && mouseX <= bRectX+33 && mouseY >= bRectY-13 && mouseY <= bRectY+13 && price > 1 && priceChange){
+        
+        price -= 1;
+        
+        
+    }
+    
+    //price + button
+    if(mouseX >= cRectX-33 && mouseX <= cRectX+33 && mouseY >= cRectY-13 && mouseY <= cRectY+13 && priceChange){
+        
+        price += 1;
+        
+        
+    }
+    
+    //wire buy button
+    if(mouseX >= dRectX-33 && mouseX <= dRectX+33 && mouseY >= dRectY-13 && mouseY <= dRectY+13 && availFunds >= wirePrice){
+        
+        wire += wPlus;
+        availFunds -= wirePrice;
+        
+    }
+    
+    //autoclipper buy button
+    if(mouseX >= eRectX-33 && mouseX <= eRectX+33 && mouseY >= eRectY-13 && mouseY <= eRectY+13 && autoAvail && availFunds >= autoClipPrice){
+        
+        autoClip++;
+        availFunds -= autoClipPrice;
+        
+        
+    }
+    
+    //wirebuyer on/off button
+    if(mouseX >= fRectX-13 && mouseX <= fRectX+13 && mouseY >= fRectY-10 && mouseY <= fRectY+10 && wireBuy){
+        
+        if(wBOn){
+            wBOn = false;
             
+        }
+        else{
+            wBOn = true;
             
-            
-            var changeTime = 0; // future when ci changes.
-            draw = function() {
-                
-                //makes autoclippers actually produce & helps with randomizing wire price
-                var now = millis();
-                if (now >= changeTime) {
-                    changeTime = now + 1000; // next change in 1000 milliseconds
-                    wirePR++;
-                    
-                    if(wire>=pClipSec){
-                        totClips += pClipSec;
-                        invent += pClipSec;
-                        wire -= pClipSec;
-                        
-                    }
-                    else if(autoAvail){
-                        totClips += wire;
-                        invent += wire;
-                        wire = 0;
-                        
-                    }
-                    
-                    //automatic selling of paperclips based on public demand
-                
-                    clipSec = round(pDemand/10);
-                    revSec = clipSec*price/100;
-                    
-                    if(invent >= clipSec){
-                        invent -= clipSec;
-                        availFunds += revSec;
-                    
-                    }
-                    else if(invent > 0){
-                        invent -= invent;
-                        availFunds += invent*price/100;
-                        
-                    }
-                    
-                    
-                }
-                
-                
-                //just don't touch
-                background(255, 255, 255);
-                
-            
-                //Total paperclips made
-                fill(0, 0, 0);
-                textSize(22);
-                text("TOTAL CLIPS:", 20, 25);
-                text(totClips, 25, 50);
-                
-                //button to make paperclips
-                textSize(14);
-                fill(255, 255, 255);
-                rectMode(CENTER);
-                rect(aRectX, aRectY, 65, 25);
-                fill(0, 0, 0);
-                text("make clip", aRectX-29, aRectY+5);
-                
-                
-                //available funds:
-                text("Available Funds: $" + availFunds, 20, 125);
-                
-                //average rev/sec
-                text("Average Revenue/Second: $" + revSec, 190, 80);
-                
-                //average clips sold/sec
-                text("Average Clips Sold/Sec: " + clipSec, 200, 100);
-                
-                //unsold inventory
-                text("Unsold Inventory: " + invent, 20, 150);
-                
-                //price/clip(two buttons(+0.01 & -0.01)
-                text("Clip Price: $" + price/100, 20, 170);
-                fill(255, 255, 255);
-                rect(bRectX, bRectY, 40, 20);
-                fill(0, 0, 0);
-                text("-$0.01", bRectX-19, bRectY+5);
-                fill(255, 255, 255);
-                rect(cRectX, cRectY, 45, 20);
-                fill(0, 0, 0);
-                text("+$0.01", cRectX-20, cRectY+5);
-                
-                //public demand
-                text("Public Demand: " + pDemand + "%", 20, 190);
-                pDemand = 30+((marketLevel-1)*(marketLevel*10));
-                
-                
-                //marketing
-                text("Marketing Level: " + marketLevel, 20, 210);
-                fill(255, 255, 255);
-                rect(gRectX, gRectY, 35, 20);
-                fill(0, 0, 0);
-                text("Marketing +1: $" + marketPrice, 20, 230);
-                
-                
-                //clips/sec
-                text("Clips/Sec: " + pClipSec, 200, 120);
-                
-                //when bought: wirebuyer(with on/off switch)
-                 if(wireBuy){
-                    text("Wirebuyer", 20, 295);
-                    fill(255, 255, 255);
-                    rect(fRectX, fRectY, 25, 20);
-                    
-                    fill(0, 0, 0);
-                    if(wBOn){
-                        text("On", 90, 295);
-                        
-                        if(wire <= 0 && availFunds >= wirePrice){
-                            wire += 1000;
-                            availFunds -= wirePrice;
-                            
-                        }
-                        
-                    }
-                    else{
-                        text("Off", 90, 295);
-                        
-                    }
-                    
-                }
-                else{
-                    fill(255, 255, 255);
-                    rect(hRectX, hRectY, 40, 20);
-                    fill(0, 0, 0);
-                    text("Buy wirebuyer: $" + wBPrice, 20, 295);
-                }
-                
-                //wire: how much and buy button
-                
-                text("Available Wire: " + wire, 20, 250);
-                fill(255, 255, 255);
-                rect(dRectX, dRectY, 30, 20);
-                
-                //price of wire
-                fill(0, 0, 0);
-                text("Price of Wire: $" + wirePrice, 20, 270);
-                
-                //after 10 clips: autoclippers and price
-                if(autoAvail){
-                    text("Autoclippers: " + autoClip, 20, 320);
-                    fill(255, 255, 255);
-                    rect(eRectX, eRectY, 25, 20);
-                    fill(0, 0, 0);
-                    text("Price of Autoclipper: $" + autoClipPrice, 20, 340);
-                    
-                }
-                
-                //enables autoclippers
-                if(totClips >= 10){
-                autoAvail = true;
-                
-                }
-                
-                //wire price randomizer
-                if(wirePR>=2){
-                    wirePrice = round(random(13, 30));
-                    wirePR = 0;
-                
-                }
-                
-                //don't worry bout it
-                pClipSec = autoClip;
-                
-                //dev stuff
-                //updates time
-                m = minute() + (hour()*60);
-                s = second() + (m*60);
-                fill(0, 0, 0);
-                text(hour() + ", " + minute() + ", " + second(), 300, 300);
-                text(s, 300, 330);
-                
-                
-                
-                
-                
-            };
-            
-            
-            mouseClicked = function(){
-                
-                //make clip button
-                if(mouseX >= aRectX-33 && mouseX <= aRectX+33 && mouseY >= aRectY-13 && mouseY <= aRectY+13 && wire > 0){
-                    totClips++;
-                    invent++;
-                    wire--;
-                    
-                }
-                
-                //price - button
-                if(mouseX >= bRectX-33 && mouseX <= bRectX+33 && mouseY >= bRectY-13 && mouseY <= bRectY+13 && price > 1){
-                    
-                    price -= 1;
-                    
-                    
-                }
-                
-                //price + button
-                if(mouseX >= cRectX-33 && mouseX <= cRectX+33 && mouseY >= cRectY-13 && mouseY <= cRectY+13){
-                    
-                    price += 1;
-                    
-                    
-                }
-                
-                //wire buy button
-                if(mouseX >= dRectX-33 && mouseX <= dRectX+33 && mouseY >= dRectY-13 && mouseY <= dRectY+13 && availFunds >= wirePrice){
-                    
-                    wire += 1000;
-                    availFunds -= wirePrice;
-                    
-                }
-                
-                //autoclipper buy button
-                if(mouseX >= eRectX-33 && mouseX <= eRectX+33 && mouseY >= eRectY-13 && mouseY <= eRectY+13 && autoAvail && availFunds >= autoClipPrice){
-                    
-                    autoClip++;
-                    availFunds -= autoClipPrice;
-                    
-                    
-                }
-                
-                //wirebuyer on/off button
-                if(mouseX >= fRectX-13 && mouseX <= fRectX+13 && mouseY >= fRectY-10 && mouseY <= fRectY+10 && wireBuy){
-                    
-                    if(wBOn){
-                        wBOn = false;
-                        
-                    }
-                    else{
-                        wBOn = true;
-                        
-                    }
-                    
-                }
-                
-                //marketing buy button
-                if(mouseX >= gRectX-18 && mouseX <= gRectX+18 && mouseY >= gRectY-10 && mouseY <= gRectY+10 && availFunds >= marketPrice){
-                    
-                    marketLevel++;
-                    availFunds -= marketPrice;
-                    
-                }
-                
-                //wirebuyer buy button
-                if(mouseX >= hRectX-20 && mouseX <=hRectX+20 && mouseY >= hRectY-10 && mouseY <= hRectY+10 && availFunds >= wBPrice){
-                    
-                    wireBuy = true;
-                    availFunds -= wBPrice;
-                    
-                }
-                
-                
-            };
+        }
+        
+    }
+    
+    //marketing buy button
+    if(mouseX >= gRectX-18 && mouseX <= gRectX+18 && mouseY >= gRectY-10 && mouseY <= gRectY+10 && availFunds >= marketPrice){
+        
+        marketLevel++;
+        availFunds -= marketPrice;
+        
+    }
+    
+    //wirebuyer buy button
+    if(mouseX >= hRectX-20 && mouseX <=hRectX+20 && mouseY >= hRectY-10 && mouseY <= hRectY+10 && availFunds >= wBPrice){
+        
+        wireBuy = true;
+        availFunds -= wBPrice;
+        
+    }
+    
+    
+};
+    
     };};
             
             // Get the canvas that ProcessingJS will use
